@@ -69,6 +69,11 @@
             font-size: 16px;
         }
 
+        .login-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
         .login-box button {
             width: 100%;
             padding: 15px;
@@ -98,6 +103,26 @@
             color: #5a67d8;
         }
 
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
+        }
+
         /* Dashboard */
         .dashboard {
             display: none;
@@ -112,6 +137,8 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .header h1 {
@@ -123,6 +150,12 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header .user-name {
+            color: #333;
+            font-weight: bold;
         }
 
         .header .logout-btn {
@@ -132,6 +165,11 @@
             padding: 10px 20px;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 14px;
+        }
+
+        .header .logout-btn:hover {
+            background: #d32f2f;
         }
 
         .dashboard-cards {
@@ -146,6 +184,11 @@
             border-radius: 15px;
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
         }
 
         .card h3 {
@@ -182,6 +225,10 @@
             cursor: pointer;
             font-size: 14px;
             transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: #f0f0ff;
         }
 
         .tab-btn.active {
@@ -223,6 +270,11 @@
             border-radius: 8px;
             font-size: 14px;
             width: 100%;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
         }
 
         button {
@@ -271,6 +323,10 @@
             border-bottom: 1px solid #f0f0f0;
         }
 
+        tr:hover {
+            background: #f8f9ff;
+        }
+
         .status-badge {
             padding: 5px 10px;
             border-radius: 20px;
@@ -290,6 +346,12 @@
             margin-top: 30px;
         }
 
+        .chart-container h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
         .goals-container, .cards-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -297,12 +359,21 @@
             margin-top: 20px;
         }
 
-        .goal-card, .credit-card {
+        .goal-card {
             background: white;
             border-radius: 15px;
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            position: relative;
+        }
+
+        .goal-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .goal-card p {
+            color: #666;
+            margin-bottom: 10px;
         }
 
         .goal-progress {
@@ -315,9 +386,27 @@
 
         .goal-progress-bar {
             height: 100%;
-            background: #4CAF50;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
             border-radius: 10px;
             transition: width 0.5s;
+        }
+
+        .credit-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .credit-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .credit-card p {
+            margin-bottom: 10px;
+            opacity: 0.9;
         }
 
         .modal {
@@ -329,6 +418,12 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-content {
@@ -339,6 +434,12 @@
             max-width: 500px;
             margin: 50px auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .modal-header {
@@ -346,6 +447,11 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #333;
+            margin: 0;
         }
 
         .close-btn {
@@ -357,6 +463,15 @@
             border-radius: 50%;
             cursor: pointer;
             font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .close-btn:hover {
+            background: #d32f2f;
         }
 
         .form-group {
@@ -370,12 +485,33 @@
             font-weight: bold;
         }
 
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
-                gap: 15px;
+                align-items: stretch;
             }
-            .input-grid { grid-template-columns: 1fr; }
+            
+            .header .user-info {
+                justify-content: space-between;
+            }
+            
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .goals-container, .cards-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -385,6 +521,9 @@
         <div class="login-box">
             <h1>💰 ControlMoney</h1>
             <p class="subtitle">Seu controle financeiro completo</p>
+            
+            <div class="error-message" id="loginError"></div>
+            <div class="success-message" id="loginSuccess"></div>
             
             <div id="loginForm">
                 <input type="email" id="loginEmail" placeholder="Email" required>
@@ -408,7 +547,7 @@
         <div class="header">
             <h1>💰 ControlMoney</h1>
             <div class="user-info">
-                <span id="userName"></span>
+                <span class="user-name" id="userName"></span>
                 <button class="logout-btn" onclick="handleLogout()">Sair</button>
             </div>
         </div>
@@ -479,7 +618,9 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="transactionsBody"></tbody>
+                <tbody id="transactionsBody">
+                    <tr><td colspan="6" class="loading">Carregando...</td></tr>
+                </tbody>
             </table>
         </div>
 
@@ -494,7 +635,9 @@
                 </div>
                 <button onclick="addGoal()">Criar Meta</button>
             </div>
-            <div class="goals-container" id="goalsContainer"></div>
+            <div class="goals-container" id="goalsContainer">
+                <p class="loading">Carregando metas...</p>
+            </div>
         </div>
 
         <!-- Cartões -->
@@ -504,12 +647,14 @@
                 <div class="input-grid">
                     <input type="text" id="cardName" placeholder="Nome do cartão (Ex: Nubank)">
                     <input type="number" id="cardLimit" placeholder="Limite (R$)">
-                    <input type="number" id="cardClosing" placeholder="Dia do fechamento (1-31)">
-                    <input type="number" id="cardDue" placeholder="Dia do vencimento (1-31)">
+                    <input type="number" id="cardClosing" placeholder="Dia do fechamento (1-31)" min="1" max="31">
+                    <input type="number" id="cardDue" placeholder="Dia do vencimento (1-31)" min="1" max="31">
                 </div>
                 <button onclick="addCard()">Adicionar Cartão</button>
             </div>
-            <div class="cards-container" id="cardsContainer"></div>
+            <div class="cards-container" id="cardsContainer">
+                <p class="loading">Carregando cartões...</p>
+            </div>
         </div>
 
         <!-- Relatórios -->
@@ -584,6 +729,8 @@
         let goals = [];
         let creditCards = [];
         let editingId = null;
+        let categoryChartInstance = null;
+        let cashFlowChartInstance = null;
 
         // Verificar sessão ao carregar
         document.addEventListener('DOMContentLoaded', async () => {
@@ -599,20 +746,43 @@
         function showRegister() {
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('loginSuccess').style.display = 'none';
         }
 
         function showLogin() {
             document.getElementById('loginForm').style.display = 'block';
             document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('loginSuccess').style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('loginSuccess').style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('loginSuccess');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('loginError').style.display = 'none';
         }
 
         async function handleRegister() {
-            const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value;
 
+            if (!name || !email || !password) {
+                showError('Preencha todos os campos!');
+                return;
+            }
+
             if (password.length < 6) {
-                alert('A senha deve ter pelo menos 6 caracteres!');
+                showError('A senha deve ter pelo menos 6 caracteres!');
                 return;
             }
 
@@ -625,17 +795,26 @@
             });
 
             if (error) {
-                alert('Erro ao cadastrar: ' + error.message);
+                showError('Erro ao cadastrar: ' + error.message);
                 return;
             }
 
-            alert('✅ Conta criada com sucesso! Faça login para continuar.');
-            showLogin();
+            if (data.user) {
+                showSuccess('✅ Conta criada com sucesso! Você já pode fazer login.');
+                setTimeout(() => {
+                    showLogin();
+                }, 2000);
+            }
         }
 
         async function handleLogin() {
-            const email = document.getElementById('loginEmail').value;
+            const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showError('Preencha email e senha!');
+                return;
+            }
 
             const { data, error } = await supabase.auth.signInWithPassword({
                 email,
@@ -643,7 +822,7 @@
             });
 
             if (error) {
-                alert('Erro ao entrar: ' + error.message);
+                showError('Erro ao entrar: ' + error.message);
                 return;
             }
 
@@ -664,6 +843,7 @@
         function showLoginScreen() {
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('loginPassword').value = '';
         }
 
         function showDashboard() {
@@ -700,7 +880,8 @@
         async function loadGoals() {
             const { data, error } = await supabase
                 .from('goals')
-                .select('*');
+                .select('*')
+                .order('created_at', { ascending: false });
 
             if (error) {
                 console.error('Erro ao carregar metas:', error);
@@ -714,7 +895,8 @@
         async function loadCards() {
             const { data, error } = await supabase
                 .from('credit_cards')
-                .select('*');
+                .select('*')
+                .order('created_at', { ascending: false });
 
             if (error) {
                 console.error('Erro ao carregar cartões:', error);
@@ -755,10 +937,12 @@
                 return;
             }
 
-            transactions.push(data[0]);
-            updateAllReports();
-            clearTransactionForm();
-            alert('✅ Transação adicionada!');
+            if (data && data[0]) {
+                transactions.push(data[0]);
+                updateAllReports();
+                clearTransactionForm();
+                alert('✅ Transação adicionada!');
+            }
         }
 
         async function toggleStatus(id) {
@@ -817,11 +1001,16 @@
         }
 
         async function saveEdit() {
-            const description = document.getElementById('editDescription').value;
+            const description = document.getElementById('editDescription').value.trim();
             const amount = parseFloat(document.getElementById('editAmount').value);
             const dueDate = document.getElementById('editDueDate').value;
             const type = document.getElementById('editType').value;
             const category = document.getElementById('editCategory').value;
+
+            if (!description || !amount || !dueDate) {
+                alert('Preencha todos os campos!');
+                return;
+            }
 
             const { error } = await supabase
                 .from('transactions')
@@ -847,9 +1036,15 @@
             alert('✅ Transação atualizada!');
         }
 
+        function clearTransactionForm() {
+            document.getElementById('description').value = '';
+            document.getElementById('amount').value = '';
+            document.getElementById('dueDate').value = '';
+        }
+
         // Metas
         async function addGoal() {
-            const name = document.getElementById('goalName').value;
+            const name = document.getElementById('goalName').value.trim();
             const target = parseFloat(document.getElementById('goalTarget').value);
             const current = parseFloat(document.getElementById('goalCurrent').value) || 0;
 
@@ -860,7 +1055,11 @@
 
             const { data, error } = await supabase
                 .from('goals')
-                .insert([{ name, target_amount: target, current_amount: current }])
+                .insert([{ 
+                    name, 
+                    target_amount: target, 
+                    current_amount: current 
+                }])
                 .select();
 
             if (error) {
@@ -868,17 +1067,25 @@
                 return;
             }
 
-            goals.push(data[0]);
-            updateGoalsDisplay();
-            document.getElementById('goalName').value = '';
-            document.getElementById('goalTarget').value = '';
-            document.getElementById('goalCurrent').value = '';
+            if (data && data[0]) {
+                goals.push(data[0]);
+                updateGoalsDisplay();
+                document.getElementById('goalName').value = '';
+                document.getElementById('goalTarget').value = '';
+                document.getElementById('goalCurrent').value = '';
+                alert('✅ Meta criada!');
+            }
         }
 
-        async function updateGoalProgress(id, currentAmount) {
+        async function updateGoalProgress(id, increment) {
+            const goal = goals.find(g => g.id === id);
+            if (!goal) return;
+
+            const newAmount = parseFloat(goal.current_amount) + increment;
+            
             const { error } = await supabase
                 .from('goals')
-                .update({ current_amount: currentAmount })
+                .update({ current_amount: newAmount })
                 .eq('id', id);
 
             if (error) {
@@ -886,11 +1093,8 @@
                 return;
             }
 
-            const goal = goals.find(g => g.id === id);
-            if (goal) {
-                goal.current_amount = currentAmount;
-                updateGoalsDisplay();
-            }
+            goal.current_amount = newAmount;
+            updateGoalsDisplay();
         }
 
         async function deleteGoal(id) {
@@ -912,13 +1116,18 @@
 
         // Cartões
         async function addCard() {
-            const name = document.getElementById('cardName').value;
+            const name = document.getElementById('cardName').value.trim();
             const limit = parseFloat(document.getElementById('cardLimit').value);
             const closing = parseInt(document.getElementById('cardClosing').value);
             const due = parseInt(document.getElementById('cardDue').value);
 
             if (!name || !limit || !closing || !due) {
                 alert('Preencha todos os campos!');
+                return;
+            }
+
+            if (closing < 1 || closing > 31 || due < 1 || due > 31) {
+                alert('Os dias devem estar entre 1 e 31!');
                 return;
             }
 
@@ -937,12 +1146,15 @@
                 return;
             }
 
-            creditCards.push(data[0]);
-            updateCardsDisplay();
-            document.getElementById('cardName').value = '';
-            document.getElementById('cardLimit').value = '';
-            document.getElementById('cardClosing').value = '';
-            document.getElementById('cardDue').value = '';
+            if (data && data[0]) {
+                creditCards.push(data[0]);
+                updateCardsDisplay();
+                document.getElementById('cardName').value = '';
+                document.getElementById('cardLimit').value = '';
+                document.getElementById('cardClosing').value = '';
+                document.getElementById('cardDue').value = '';
+                alert('✅ Cartão adicionado!');
+            }
         }
 
         async function deleteCard(id) {
@@ -962,13 +1174,17 @@
             updateCardsDisplay();
         }
 
-        // Atualização de UI
+        // UI
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
             document.getElementById(tabName + 'Tab').classList.add('active');
             event.target.classList.add('active');
+            
+            if (tabName === 'reports') {
+                updateCharts();
+            }
         }
 
         function updateAllReports() {
@@ -976,7 +1192,6 @@
             updateTransactionsTable();
             updateGoalsDisplay();
             updateCardsDisplay();
-            updateCharts();
         }
 
         function updateSummaryCards() {
@@ -988,10 +1203,11 @@
             today.setHours(0, 0, 0, 0);
 
             transactions.forEach(t => {
+                const amount = parseFloat(t.amount) || 0;
                 if (t.type === 'income') {
-                    totalIncome += parseFloat(t.amount);
+                    totalIncome += amount;
                 } else {
-                    totalExpense += parseFloat(t.amount);
+                    totalExpense += amount;
                 }
 
                 const dueDate = new Date(t.due_date + 'T00:00:00');
@@ -1023,12 +1239,13 @@
                 const dueDate = new Date(t.due_date + 'T00:00:00');
                 let status = t.status === 'paid' ? 'paid' : (dueDate < today ? 'late' : 'pending');
                 const statusText = { paid: 'PAGO', pending: 'A VENCER', late: 'ATRASADO' }[status];
+                const categoryDisplay = t.category.charAt(0).toUpperCase() + t.category.slice(1);
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${dueDate.toLocaleDateString('pt-BR')}</td>
                     <td>${t.description}</td>
-                    <td>${t.category}</td>
+                    <td>${categoryDisplay}</td>
                     <td style="color: ${t.type === 'income' ? '#4CAF50' : '#f44336'}; font-weight:bold;">
                         ${t.type === 'income' ? '+' : '-'} ${formatCurrency(t.amount)}
                     </td>
@@ -1050,24 +1267,27 @@
             container.innerHTML = '';
 
             if (goals.length === 0) {
-                container.innerHTML = '<p style="color:#999;">Nenhuma meta criada ainda.</p>';
+                container.innerHTML = '<p style="color:#999; text-align:center;">Nenhuma meta criada ainda.</p>';
                 return;
             }
 
             goals.forEach(goal => {
-                const percentage = goal.target_amount > 0 ? (goal.current_amount / goal.target_amount) * 100 : 0;
+                const current = parseFloat(goal.current_amount) || 0;
+                const target = parseFloat(goal.target_amount) || 0;
+                const percentage = target > 0 ? (current / target) * 100 : 0;
+                
                 const card = document.createElement('div');
                 card.className = 'goal-card';
                 card.innerHTML = `
-                    <h3>${goal.name}</h3>
-                    <p>${formatCurrency(goal.current_amount)} de ${formatCurrency(goal.target_amount)}</p>
+                    <h3>🎯 ${goal.name}</h3>
+                    <p>${formatCurrency(current)} de ${formatCurrency(target)}</p>
                     <div class="goal-progress">
                         <div class="goal-progress-bar" style="width: ${Math.min(percentage, 100)}%"></div>
                     </div>
-                    <p style="margin-top:10px; font-size:0.9em;">${percentage.toFixed(1)}%</p>
+                    <p style="margin-top:10px; font-weight:bold; color:#4CAF50;">${percentage.toFixed(1)}%</p>
                     <div style="margin-top:15px;">
-                        <button onclick="updateGoalProgress(${goal.id}, ${goal.current_amount + 100})" class="btn-small btn-success">+100</button>
-                        <button onclick="updateGoalProgress(${goal.id}, ${goal.current_amount + 500})" class="btn-small btn-success">+500</button>
+                        <button onclick="updateGoalProgress(${goal.id}, 100)" class="btn-small btn-success">+100</button>
+                        <button onclick="updateGoalProgress(${goal.id}, 500)" class="btn-small btn-success">+500</button>
                         <button onclick="deleteGoal(${goal.id})" class="btn-small btn-danger">Excluir</button>
                     </div>
                 `;
@@ -1080,21 +1300,19 @@
             container.innerHTML = '';
 
             if (creditCards.length === 0) {
-                container.innerHTML = '<p style="color:#999;">Nenhum cartão cadastrado.</p>';
+                container.innerHTML = '<p style="color:#999; text-align:center;">Nenhum cartão cadastrado.</p>';
                 return;
             }
 
             creditCards.forEach(card => {
                 const cardElement = document.createElement('div');
                 cardElement.className = 'credit-card';
-                cardElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                cardElement.style.color = 'white';
                 cardElement.innerHTML = `
                     <h3>💳 ${card.name}</h3>
-                    <p style="font-size:1.5em; margin:10px 0;">Limite: ${formatCurrency(card.credit_limit)}</p>
-                    <p>Fechamento: dia ${card.closing_day}</p>
-                    <p>Vencimento: dia ${card.due_day}</p>
-                    <button onclick="deleteCard(${card.id})" class="btn-danger btn-small" style="margin-top:10px;">Excluir</button>
+                    <p style="font-size:1.5em; margin:15px 0;">Limite: ${formatCurrency(card.credit_limit)}</p>
+                    <p>📅 Fechamento: dia ${card.closing_day}</p>
+                    <p>⏰ Vencimento: dia ${card.due_day}</p>
+                    <button onclick="deleteCard(${card.id})" class="btn-danger btn-small" style="margin-top:15px;">Excluir</button>
                 `;
                 container.appendChild(cardElement);
             });
@@ -1105,61 +1323,96 @@
             const categoryData = {};
             transactions.forEach(t => {
                 if (t.type === 'expense') {
-                    if (!categoryData[t.category]) categoryData[t.category] = 0;
-                    categoryData[t.category] += parseFloat(t.amount);
+                    const category = t.category || 'outros';
+                    if (!categoryData[category]) categoryData[category] = 0;
+                    categoryData[category] += parseFloat(t.amount) || 0;
                 }
             });
 
             const ctx1 = document.getElementById('categoryChart').getContext('2d');
-            if (window.categoryChartInstance) window.categoryChartInstance.destroy();
+            if (categoryChartInstance) categoryChartInstance.destroy();
             
-            window.categoryChartInstance = new Chart(ctx1, {
+            const categoryLabels = Object.keys(categoryData).map(c => c.charAt(0).toUpperCase() + c.slice(1));
+            const categoryValues = Object.values(categoryData);
+
+            categoryChartInstance = new Chart(ctx1, {
                 type: 'doughnut',
                 data: {
-                    labels: Object.keys(categoryData),
+                    labels: categoryLabels,
                     datasets: [{
-                        data: Object.values(categoryData),
-                        backgroundColor: ['#667eea', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#fee140', '#6a3093', '#ff9800', '#a8c0ff']
+                        data: categoryValues,
+                        backgroundColor: ['#667eea', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#fee140', '#6a3093', '#ff9800', '#a8c0ff', '#ff6384']
                     }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
                 }
             });
 
             // Gráfico de fluxo de caixa
             const monthlyData = {};
             transactions.forEach(t => {
-                const month = t.due_date.substring(0, 7);
+                const month = t.due_date ? t.due_date.substring(0, 7) : 'N/A';
                 if (!monthlyData[month]) monthlyData[month] = { income: 0, expense: 0 };
-                if (t.type === 'income') monthlyData[month].income += parseFloat(t.amount);
-                else monthlyData[month].expense += parseFloat(t.amount);
+                const amount = parseFloat(t.amount) || 0;
+                if (t.type === 'income') {
+                    monthlyData[month].income += amount;
+                } else {
+                    monthlyData[month].expense += amount;
+                }
             });
 
             const months = Object.keys(monthlyData).sort();
             const ctx2 = document.getElementById('cashFlowChart').getContext('2d');
-            if (window.cashFlowChartInstance) window.cashFlowChartInstance.destroy();
+            if (cashFlowChartInstance) cashFlowChartInstance.destroy();
 
-            window.cashFlowChartInstance = new Chart(ctx2, {
+            cashFlowChartInstance = new Chart(ctx2, {
                 type: 'bar',
                 data: {
                     labels: months,
                     datasets: [
-                        { label: 'Entradas', data: months.map(m => monthlyData[m].income), backgroundColor: '#4CAF50' },
-                        { label: 'Saídas', data: months.map(m => monthlyData[m].expense), backgroundColor: '#f44336' }
+                        { 
+                            label: 'Entradas', 
+                            data: months.map(m => monthlyData[m].income), 
+                            backgroundColor: '#4CAF50',
+                            borderRadius: 5
+                        },
+                        { 
+                            label: 'Saídas', 
+                            data: months.map(m => monthlyData[m].expense), 
+                            backgroundColor: '#f44336',
+                            borderRadius: 5
+                        }
                     ]
                 },
                 options: {
-                    scales: { y: { beginAtZero: true } }
+                    responsive: true,
+                    scales: { 
+                        y: { 
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        } 
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
                 }
             });
         }
 
         function formatCurrency(value) {
-            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
-
-        function clearTransactionForm() {
-            document.getElementById('description').value = '';
-            document.getElementById('amount').value = '';
-            document.getElementById('dueDate').value = '';
+            return (value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
         // Fechar modal
@@ -1167,6 +1420,10 @@
             const modal = document.getElementById('editModal');
             if (event.target === modal) closeEditModal();
         }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') closeEditModal();
+        });
     </script>
 </body>
 </html>
