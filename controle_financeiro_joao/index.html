@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle Financeiro - Deep Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card.income .value { color: #4CAF50; }
+        .card.expense .value { color: #f44336; }
+        .card.balance .value { color: #2196F3; }
+        .card.alert .value { color: #ff9800; }
+
+        .input-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .input-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+
+        .btn-danger {
+            background: #f44336;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        table {
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        tr:hover {
+            background: #f8f9ff;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .status-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-late {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-top: 30px;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bar-label {
+            width: 150px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .bar-track {
+            flex: 1;
+            background: #f0f0f0;
+            border-radius: 10px;
+            height: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .input-grid { grid-template-columns: 1fr; }
+            .bar-label { width: 100px; font-size: 0.85em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Controle Financeiro Dinâmico</h1>
+
+        <!-- Cards de Resumo -->
+        <div class="dashboard" id="dashboard">
+            <div class="card income">
+                <h3>Total de Entradas</h3>
+                <div class="value" id="totalIncome">R$ 0,00</div>
+            </div>
+            <div class="card expense">
+                <h3>Total de Saídas</h3>
+                <div class="value" id="totalExpense">R$ 0,00</div>
+            </div>
+            <div class="card balance">
+                <h3>Saldo do Mês</h3>
+                <div class="value" id="balance">R$ 0,00</div>
+            </div>
+            <div class="card alert">
+                <h3>Contas em Atraso</h3>
+                <div class="value" id="lateCount">0</div>
+            </div>
+        </div>
+
+        <!-- Formulário de Entrada -->
+        <div class="input-section">
+            <h2>➕ Adicionar Nova Transação</h2>
+            <div class="input-grid">
+                <input type="text" id="description" placeholder="Descrição (Ex: Aluguel, Salário...)" required>
+                <input type="number" id="amount" placeholder="Valor (R$)" required>
+                <input type="date" id="dueDate" required>
+                <select id="type">
+                    <option value="expense">Despesa (Saída)</option>
+                    <option value="income">Receita (Entrada)</option>
+                </select>
+                <select id="category">
+                    <option value="moradia">Moradia</option>
+                    <option value="alimentacao">Alimentação</option>
+                    <option value="transporte">Transporte</option>
+                    <option value="saude">Saúde</option>
+                    <option value="educacao">Educação</option>
+                    <option value="lazer">Lazer</option>
+                    <option value="servicos">Serviços</option>
+                    <option value="outros">Outros</option>
+                </select>
+            </div>
+            <button onclick="addTransaction()">Adicionar Transação</button>
+        </div>
+
+        <!-- Tabela de Transações -->
+        <table id="transactionsTable">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                    <th>Categoria</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="transactionsBody">
+                <!-- Dados serão inseridos via JavaScript -->
+            </tbody>
+        </table>
+
+        <!-- Gráfico de Categorias -->
+        <div class="chart-container">
+            <h2>📊 Análise por Categoria</h2>
+            <div class="bar-chart" id="categoryChart">
+                <!-- Barras serão geradas via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estrutura de dados
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+        // Função para salvar no localStorage
+        function saveTransactions() {
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+        }
+
+        // Função para adicionar transação
+        function addTransaction() {
+            const description = document.getElementById('description').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const dueDate = document.getElementById('dueDate').value;
+            const type = document.getElementById('type').value;
+            const category = document.getElementById('category').value;
+
+            if (!description || !amount || !dueDate) {
+                alert('Por favor, preencha todos os campos!');
+                return;
+            }
+
+            const transaction = {
+                id: Date.now(),
+                description,
+                amount,
+                dueDate,
+                type,
+                category,
+                status: 'pending' // pending, paid, late
+            };
+
+            transactions.push(transaction);
+            saveTransactions();
+            updateReport();
+            clearForm();
+        }
+
+        // Função para limpar formulário
+        function clearForm() {
+            document.getElementById('description').value = '';
+            document.getElementById('amount').value = '';
+            document.getElementById('dueDate').value = '';
+        }
+
+        // Função para verificar status
+        function checkStatus(transaction) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const dueDate = new Date(transaction.dueDate + 'T00:00:00');
+
+            if (transaction.status === 'paid') {
+                return 'paid';
+            } else if (dueDate < today) {
+                return 'late';
+            } else {
+                return 'pending';
+            }
+        }
+
+        // Função para formatar moeda
+        function formatCurrency(value) {
+            return value.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+
+        // Função principal para atualizar relatório
+        function updateReport() {
+            // Calcular totais
+            let totalIncome = 0;
+            let totalExpense = 0;
+            let lateCount = 0;
+
+            transactions.forEach(transaction => {
+                const status = checkStatus(transaction);
+                if (status === 'late') lateCount++;
+
+                if (transaction.type === 'income') {
+                    totalIncome += transaction.amount;
+                } else {
+                    totalExpense += transaction.amount;
+                }
+            });
+
+            const balance = totalIncome - totalExpense;
+
+            // Atualizar cards
+            document.getElementById('totalIncome').textContent = formatCurrency(totalIncome);
+            document.getElementById('totalExpense').textContent = formatCurrency(totalExpense);
+            document.getElementById('balance').textContent = formatCurrency(balance);
+            document.getElementById('lateCount').textContent = lateCount;
+
+            // Atualizar tabela
+            updateTable();
+            
+            // Atualizar gráfico
+            updateChart();
+        }
+
+        // Função para atualizar tabela
+        function updateTable() {
+            const tbody = document.getElementById('transactionsBody');
+            tbody.innerHTML = '';
+
+            // Ordenar por data
+            const sortedTransactions = [...transactions].sort((a, b) => 
+                new Date(a.dueDate) - new Date(b.dueDate)
+            );
+
+            sortedTransactions.forEach(transaction => {
+                const status = checkStatus(transaction);
+                const row = document.createElement('tr');
+                
+                const statusClass = `status-${status}`;
+                const statusText = {
+                    'paid': 'PAGO',
+                    'pending': 'A VENCER',
+                    'late': 'ATRASADO'
+                }[status];
+
+                row.innerHTML = `
+                    <td>${new Date(transaction.dueDate + 'T00:00:00').toLocaleDateString('pt-BR')}</td>
+                    <td>${transaction.description}</td>
+                    <td>${transaction.category.charAt(0).toUpperCase() + transaction.category.slice(1)}</td>
+                    <td style="color: ${transaction.type === 'income' ? '#4CAF50' : '#f44336'}; font-weight: bold;">
+                        ${transaction.type === 'income' ? '+' : '-'} ${formatCurrency(transaction.amount)}
+                    </td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button onclick="toggleStatus(${transaction.id})" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;">
+                            ${status === 'paid' ? 'Desmarcar' : 'Marcar Pago'}
+                        </button>
+                        <button onclick="deleteTransaction(${transaction.id})" class="btn-danger" style="padding: 5px 10px; font-size: 12px;">
+                            Excluir
+                        </button>
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+            });
+        }
+
+        // Função para atualizar gráfico
+        function updateChart() {
+            const chartDiv = document.getElementById('categoryChart');
+            chartDiv.innerHTML = '';
+
+            // Agrupar despesas por categoria
+            const categoryTotals = {};
+            let maxExpense = 0;
+
+            transactions.forEach(transaction => {
+                if (transaction.type === 'expense') {
+                    if (!categoryTotals[transaction.category]) {
+                        categoryTotals[transaction.category] = 0;
+                    }
+                    categoryTotals[transaction.category] += transaction.amount;
+                    maxExpense = Math.max(maxExpense, categoryTotals[transaction.category]);
+                }
+            });
+
+            // Criar barras
+            Object.entries(categoryTotals).forEach(([category, amount]) => {
+                const percentage = maxExpense > 0 ? (amount / maxExpense) * 100 : 0;
+                
+                const barItem = document.createElement('div');
+                barItem.className = 'bar-item';
+                
+                const colors = {
+                    'moradia': '#667eea',
+                    'alimentacao': '#f093fb',
+                    'transporte': '#4facfe',
+                    'saude': '#43e97b',
+                    'educacao': '#fa709a',
+                    'lazer': '#fee140',
+                    'servicos': '#6a3093',
+                    'outros': '#a8c0ff'
+                };
+
+                const color = colors[category] || '#667eea';
+
+                barItem.innerHTML = `
+                    <div class="bar-label">${category.charAt(0).toUpperCase() + category.slice(1)}</div>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: ${percentage}%; background: ${color};">
+                            ${formatCurrency(amount)}
+                        </div>
+                    </div>
+                `;
+
+                chartDiv.appendChild(barItem);
+            });
+        }
+
+        // Função para alternar status
+        function toggleStatus(id) {
+            const transaction = transactions.find(t => t.id === id);
+            if (transaction) {
+                transaction.status = transaction.status === 'paid' ? 'pending' : 'paid';
+                saveTransactions();
+                updateReport();
+            }
+        }
+
+        // Função para excluir transação
+        function deleteTransaction(id) {
+            if (confirm('Tem certeza que deseja excluir esta transação?')) {
+                transactions = transactions.filter(t => t.id !== id);
+                saveTransactions();
+                updateReport();
+            }
+        }
+
+        // Inicializar relatório
+        updateReport();
+
+        // Adicionar transações de exemplo na primeira execução
+        if (transactions.length === 0) {
+            const examples = [
+                {
+                    id: 1,
+                    description: 'Salário',
+                    amount: 5000,
+                    dueDate: '2024-08-05',
+                    type: 'income',
+                    category: 'outros',
+                    status: 'paid'
+                },
+                {
+                    id: 2,
+                    description: 'Aluguel',
+                    amount: 1500,
+                    dueDate: '2024-08-10',
+                    type: 'expense',
+                    category: 'moradia',
+                    status: 'pending'
+                },
+                {
+                    id: 3,
+                    description: 'Supermercado',
+                    amount: 800,
+                    dueDate: '2024-08-15',
+                    type: 'expense',
+                    category: 'alimentacao',
+                    status: 'pending'
+                },
+                {
+                    id: 4,
+                    description: 'Internet',
+                    amount: 120,
+                    dueDate: '2024-08-20',
+                    type: 'expense',
+                    category: 'servicos',
+                    status: 'pending'
+                }
+            ];
+            transactions = examples;
+            saveTransactions();
+            updateReport();
+        }
+    </script>
+</body>
+</html>
