@@ -68,6 +68,24 @@
         .card.balance .value { color: #2196F3; }
         .card.alert .value { color: #ff9800; }
 
+        .alert-message {
+            background: #ff9800;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
         .input-section {
             background: white;
             border-radius: 15px;
@@ -94,6 +112,7 @@
             border-radius: 8px;
             font-size: 14px;
             transition: border-color 0.3s;
+            width: 100%;
         }
 
         input:focus, select:focus {
@@ -110,6 +129,7 @@
             font-size: 16px;
             cursor: pointer;
             transition: background 0.3s;
+            margin: 5px;
         }
 
         button:hover {
@@ -122,6 +142,14 @@
 
         .btn-danger:hover {
             background: #d32f2f;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
         }
 
         table {
@@ -218,6 +246,16 @@
             font-size: 0.9em;
         }
 
+        .data-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #666;
+        }
+
         @media (max-width: 768px) {
             h1 { font-size: 1.8em; }
             .input-grid { grid-template-columns: 1fr; }
@@ -228,6 +266,11 @@
 <body>
     <div class="container">
         <h1>💰 Controle Financeiro Dinâmico</h1>
+
+        <!-- Alerta de erro -->
+        <div class="alert-message" id="alertMessage">
+            ⚠️ Não foi possível salvar os dados! Verifique se o modo anônimo está ativado ou se os cookies estão bloqueados.
+        </div>
 
         <!-- Cards de Resumo -->
         <div class="dashboard" id="dashboard">
@@ -272,6 +315,7 @@
                 </select>
             </div>
             <button onclick="addTransaction()">Adicionar Transação</button>
+            <button onclick="clearAllData()" class="btn-secondary">Limpar Todos os Dados</button>
         </div>
 
         <!-- Tabela de Transações -->
@@ -298,20 +342,60 @@
                 <!-- Barras serão geradas via JavaScript -->
             </div>
         </div>
+
+        <div class="data-info">
+            💾 Seus dados são salvos automaticamente neste navegador/dispositivo.
+            Para sincronizar entre dispositivos, exporte e importe os dados.
+        </div>
     </div>
 
     <script>
         // Estrutura de dados
-        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+        let transactions = [];
+
+        // Função para carregar dados do localStorage
+        function loadTransactions() {
+            try {
+                const saved = localStorage.getItem('transactions_finance');
+                if (saved) {
+                    transactions = JSON.parse(saved);
+                    console.log('Dados carregados:', transactions.length, 'transações');
+                } else {
+                    transactions = [];
+                    console.log('Nenhum dado salvo encontrado');
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                transactions = [];
+                showAlert();
+            }
+        }
 
         // Função para salvar no localStorage
         function saveTransactions() {
-            localStorage.setItem('transactions', JSON.stringify(transactions));
+            try {
+                localStorage.setItem('transactions_finance', JSON.stringify(transactions));
+                console.log('Dados salvos com sucesso!', transactions.length, 'transações');
+                hideAlert();
+            } catch (error) {
+                console.error('Erro ao salvar dados:', error);
+                showAlert();
+            }
+        }
+
+        // Função para mostrar alerta
+        function showAlert() {
+            document.getElementById('alertMessage').style.display = 'block';
+        }
+
+        // Função para esconder alerta
+        function hideAlert() {
+            document.getElementById('alertMessage').style.display = 'none';
         }
 
         // Função para adicionar transação
         function addTransaction() {
-            const description = document.getElementById('description').value;
+            const description = document.getElementById('description').value.trim();
             const amount = parseFloat(document.getElementById('amount').value);
             const dueDate = document.getElementById('dueDate').value;
             const type = document.getElementById('type').value;
@@ -329,13 +413,16 @@
                 dueDate,
                 type,
                 category,
-                status: 'pending' // pending, paid, late
+                status: 'pending'
             };
 
             transactions.push(transaction);
             saveTransactions();
             updateReport();
             clearForm();
+            
+            // Feedback visual
+            alert('✅ Transação adicionada e salva com sucesso!');
         }
 
         // Função para limpar formulário
@@ -343,6 +430,16 @@
             document.getElementById('description').value = '';
             document.getElementById('amount').value = '';
             document.getElementById('dueDate').value = '';
+        }
+
+        // Função para limpar todos os dados
+        function clearAllData() {
+            if (confirm('⚠️ Tem certeza que deseja excluir TODAS as transações? Esta ação não pode ser desfeita!')) {
+                transactions = [];
+                saveTransactions();
+                updateReport();
+                alert('Todos os dados foram apagados.');
+            }
         }
 
         // Função para verificar status
@@ -370,7 +467,6 @@
 
         // Função principal para atualizar relatório
         function updateReport() {
-            // Calcular totais
             let totalIncome = 0;
             let totalExpense = 0;
             let lateCount = 0;
@@ -388,16 +484,12 @@
 
             const balance = totalIncome - totalExpense;
 
-            // Atualizar cards
             document.getElementById('totalIncome').textContent = formatCurrency(totalIncome);
             document.getElementById('totalExpense').textContent = formatCurrency(totalExpense);
             document.getElementById('balance').textContent = formatCurrency(balance);
             document.getElementById('lateCount').textContent = lateCount;
 
-            // Atualizar tabela
             updateTable();
-            
-            // Atualizar gráfico
             updateChart();
         }
 
@@ -406,10 +498,20 @@
             const tbody = document.getElementById('transactionsBody');
             tbody.innerHTML = '';
 
-            // Ordenar por data
             const sortedTransactions = [...transactions].sort((a, b) => 
                 new Date(a.dueDate) - new Date(b.dueDate)
             );
+
+            if (sortedTransactions.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 30px; color: #999;">
+                            📝 Nenhuma transação cadastrada. Adicione sua primeira transação acima!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
 
             sortedTransactions.forEach(transaction => {
                 const status = checkStatus(transaction);
@@ -449,7 +551,6 @@
             const chartDiv = document.getElementById('categoryChart');
             chartDiv.innerHTML = '';
 
-            // Agrupar despesas por categoria
             const categoryTotals = {};
             let maxExpense = 0;
 
@@ -463,7 +564,11 @@
                 }
             });
 
-            // Criar barras
+            if (Object.keys(categoryTotals).length === 0) {
+                chartDiv.innerHTML = '<p style="text-align: center; color: #999;">Nenhuma despesa registrada para análise.</p>';
+                return;
+            }
+
             Object.entries(categoryTotals).forEach(([category, amount]) => {
                 const percentage = maxExpense > 0 ? (amount / maxExpense) * 100 : 0;
                 
@@ -503,6 +608,7 @@
                 transaction.status = transaction.status === 'paid' ? 'pending' : 'paid';
                 saveTransactions();
                 updateReport();
+                console.log('Status alterado e salvo!');
             }
         }
 
@@ -512,56 +618,32 @@
                 transactions = transactions.filter(t => t.id !== id);
                 saveTransactions();
                 updateReport();
+                console.log('Transação excluída e dados salvos!');
             }
         }
 
-        // Inicializar relatório
-        updateReport();
-
-        // Adicionar transações de exemplo na primeira execução
-        if (transactions.length === 0) {
-            const examples = [
-                {
-                    id: 1,
-                    description: 'Salário',
-                    amount: 5000,
-                    dueDate: '2024-08-05',
-                    type: 'income',
-                    category: 'outros',
-                    status: 'paid'
-                },
-                {
-                    id: 2,
-                    description: 'Aluguel',
-                    amount: 1500,
-                    dueDate: '2024-08-10',
-                    type: 'expense',
-                    category: 'moradia',
-                    status: 'pending'
-                },
-                {
-                    id: 3,
-                    description: 'Supermercado',
-                    amount: 800,
-                    dueDate: '2024-08-15',
-                    type: 'expense',
-                    category: 'alimentacao',
-                    status: 'pending'
-                },
-                {
-                    id: 4,
-                    description: 'Internet',
-                    amount: 120,
-                    dueDate: '2024-08-20',
-                    type: 'expense',
-                    category: 'servicos',
-                    status: 'pending'
-                }
-            ];
-            transactions = examples;
-            saveTransactions();
+        // Inicializar sistema
+        function init() {
+            loadTransactions();
             updateReport();
+            console.log('Sistema iniciado!');
+            console.log('Teste de salvamento:');
+            
+            // Testar localStorage
+            try {
+                const testKey = '__test__';
+                localStorage.setItem(testKey, 'test');
+                localStorage.removeItem(testKey);
+                console.log('✅ localStorage está funcionando corretamente');
+                hideAlert();
+            } catch (error) {
+                console.error('❌ localStorage bloqueado!');
+                showAlert();
+            }
         }
+
+        // Iniciar
+        init();
     </script>
 </body>
 </html>
