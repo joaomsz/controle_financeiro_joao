@@ -750,8 +750,6 @@
             const email = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value;
 
-            console.log('Tentando cadastrar:', { name, email });
-
             if (!name || !email || !password) {
                 showError('Preencha todos os campos!');
                 return;
@@ -770,8 +768,6 @@
                         data: { full_name: name }
                     }
                 });
-
-                console.log('Resposta:', { data, error });
 
                 if (error) {
                     showError('Erro ao cadastrar: ' + error.message);
@@ -792,7 +788,6 @@
                     }
                 }
             } catch (err) {
-                console.error('Erro inesperado:', err);
                 showError('Erro inesperado: ' + err.message);
             }
         }
@@ -908,9 +903,16 @@
                 return;
             }
 
+            if (!currentUser || !currentUser.id) {
+                alert('Sessão expirada. Faça login novamente.');
+                handleLogout();
+                return;
+            }
+
             const { data, error } = await supabaseClient
                 .from('transactions')
                 .insert([{
+                    user_id: currentUser.id,
                     description,
                     amount,
                     due_date: dueDate,
@@ -921,6 +923,7 @@
                 .select();
 
             if (error) {
+                console.error('Erro detalhado:', error);
                 alert('Erro ao adicionar: ' + error.message);
                 return;
             }
@@ -942,7 +945,8 @@
             const { error } = await supabaseClient
                 .from('transactions')
                 .update({ status: newStatus })
-                .eq('id', id);
+                .eq('id', id)
+                .eq('user_id', currentUser.id);
 
             if (error) {
                 alert('Erro ao atualizar: ' + error.message);
@@ -959,7 +963,8 @@
             const { error } = await supabaseClient
                 .from('transactions')
                 .delete()
-                .eq('id', id);
+                .eq('id', id)
+                .eq('user_id', currentUser.id);
 
             if (error) {
                 alert('Erro ao excluir: ' + error.message);
@@ -1003,7 +1008,8 @@
             const { error } = await supabaseClient
                 .from('transactions')
                 .update({ description, amount, due_date: dueDate, type, category })
-                .eq('id', editingId);
+                .eq('id', editingId)
+                .eq('user_id', currentUser.id);
 
             if (error) {
                 alert('Erro ao salvar: ' + error.message);
@@ -1043,6 +1049,7 @@
             const { data, error } = await supabaseClient
                 .from('goals')
                 .insert([{ 
+                    user_id: currentUser.id,
                     name, 
                     target_amount: target, 
                     current_amount: current 
@@ -1073,7 +1080,8 @@
             const { error } = await supabaseClient
                 .from('goals')
                 .update({ current_amount: newAmount })
-                .eq('id', id);
+                .eq('id', id)
+                .eq('user_id', currentUser.id);
 
             if (error) {
                 alert('Erro ao atualizar: ' + error.message);
@@ -1090,7 +1098,8 @@
             const { error } = await supabaseClient
                 .from('goals')
                 .delete()
-                .eq('id', id);
+                .eq('id', id)
+                .eq('user_id', currentUser.id);
 
             if (error) {
                 alert('Erro ao excluir: ' + error.message);
@@ -1112,14 +1121,10 @@
                 return;
             }
 
-            if (closing < 1 || closing > 31 || due < 1 || due > 31) {
-                alert('Os dias devem estar entre 1 e 31!');
-                return;
-            }
-
             const { data, error } = await supabaseClient
                 .from('credit_cards')
                 .insert([{ 
+                    user_id: currentUser.id,
                     name, 
                     credit_limit: limit, 
                     closing_day: closing, 
@@ -1149,7 +1154,8 @@
             const { error } = await supabaseClient
                 .from('credit_cards')
                 .delete()
-                .eq('id', id);
+                .eq('id', id)
+                .eq('user_id', currentUser.id);
 
             if (error) {
                 alert('Erro ao excluir: ' + error.message);
