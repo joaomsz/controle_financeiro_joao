@@ -30,7 +30,6 @@
             margin: 0 auto;
         }
 
-        /* Login Screen */
         .login-screen {
             display: flex;
             justify-content: center;
@@ -123,7 +122,6 @@
             display: none;
         }
 
-        /* Dashboard */
         .dashboard {
             display: none;
         }
@@ -418,12 +416,6 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.5);
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
 
         .modal-content {
@@ -434,12 +426,6 @@
             max-width: 500px;
             margin: 50px auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
 
         .modal-header {
@@ -552,7 +538,6 @@
             </div>
         </div>
 
-        <!-- Cards de Resumo -->
         <div class="dashboard-cards">
             <div class="card income">
                 <h3>Total de Entradas</h3>
@@ -572,7 +557,6 @@
             </div>
         </div>
 
-        <!-- Tabs -->
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('transactions')">Transações</button>
             <button class="tab-btn" onclick="switchTab('goals')">Metas</button>
@@ -580,7 +564,6 @@
             <button class="tab-btn" onclick="switchTab('reports')">Relatórios</button>
         </div>
 
-        <!-- Transações -->
         <div class="tab-content active" id="transactionsTab">
             <div class="input-section">
                 <h2>➕ Adicionar Nova Transação</h2>
@@ -624,7 +607,6 @@
             </table>
         </div>
 
-        <!-- Metas -->
         <div class="tab-content" id="goalsTab">
             <div class="input-section">
                 <h2>🎯 Nova Meta de Economia</h2>
@@ -640,7 +622,6 @@
             </div>
         </div>
 
-        <!-- Cartões -->
         <div class="tab-content" id="cardsTab">
             <div class="input-section">
                 <h2>💳 Adicionar Cartão</h2>
@@ -657,7 +638,6 @@
             </div>
         </div>
 
-        <!-- Relatórios -->
         <div class="tab-content" id="reportsTab">
             <div class="chart-container">
                 <h2>📊 Despesas por Categoria</h2>
@@ -670,7 +650,6 @@
         </div>
     </div>
 
-    <!-- Modal de Edição -->
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -716,14 +695,11 @@
     </div>
 
     <script>
-        // Configuração Supabase
         const SUPABASE_URL = 'https://sckkkhxpgghhicapghig.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNja2traHhwZ2doaGljYXBnaGlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2MzE2MDYsImV4cCI6MjEwMjIwNzYwNn0.55NfbdflADj7KIXzCHn8Pi8gKTlkD4SUNeymhApcXXw';
         
-        // Inicializar Supabase
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
-        // Estado global
         let currentUser = null;
         let transactions = [];
         let goals = [];
@@ -732,9 +708,8 @@
         let categoryChartInstance = null;
         let cashFlowChartInstance = null;
 
-        // Verificar sessão ao carregar
         document.addEventListener('DOMContentLoaded', async () => {
-            const { data: { session }, error } = await supabase.auth.getSession();
+            const { data: { session }, error } = await supabaseClient.auth.getSession();
             if (session) {
                 currentUser = session.user;
                 showDashboard();
@@ -742,7 +717,6 @@
             }
         });
 
-        // Funções de Autenticação
         function showRegister() {
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('registerForm').style.display = 'block';
@@ -776,6 +750,8 @@
             const email = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value;
 
+            console.log('Tentando cadastrar:', { name, email });
+
             if (!name || !email || !password) {
                 showError('Preencha todos os campos!');
                 return;
@@ -786,24 +762,38 @@
                 return;
             }
 
-            const { data, error } = await supabase.auth.signUp({
-                email,
-                password,
-                options: {
-                    data: { full_name: name }
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: { full_name: name }
+                    }
+                });
+
+                console.log('Resposta:', { data, error });
+
+                if (error) {
+                    showError('Erro ao cadastrar: ' + error.message);
+                    return;
                 }
-            });
 
-            if (error) {
-                showError('Erro ao cadastrar: ' + error.message);
-                return;
-            }
-
-            if (data.user) {
-                showSuccess('✅ Conta criada com sucesso! Você já pode fazer login.');
-                setTimeout(() => {
-                    showLogin();
-                }, 2000);
+                if (data.user) {
+                    if (data.session) {
+                        currentUser = data.user;
+                        showDashboard();
+                        await loadUserData();
+                        showSuccess('✅ Conta criada com sucesso!');
+                    } else {
+                        showSuccess('✅ Conta criada! Faça login para continuar.');
+                        setTimeout(() => {
+                            showLogin();
+                        }, 2000);
+                    }
+                }
+            } catch (err) {
+                console.error('Erro inesperado:', err);
+                showError('Erro inesperado: ' + err.message);
             }
         }
 
@@ -816,7 +806,7 @@
                 return;
             }
 
-            const { data, error } = await supabase.auth.signInWithPassword({
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
                 email,
                 password
             });
@@ -832,7 +822,7 @@
         }
 
         async function handleLogout() {
-            await supabase.auth.signOut();
+            await supabaseClient.auth.signOut();
             currentUser = null;
             transactions = [];
             goals = [];
@@ -852,7 +842,6 @@
             document.getElementById('userName').textContent = currentUser.user_metadata?.full_name || currentUser.email;
         }
 
-        // Carregar dados do usuário
         async function loadUserData() {
             await Promise.all([
                 loadTransactions(),
@@ -863,7 +852,7 @@
         }
 
         async function loadTransactions() {
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('transactions')
                 .select('*')
                 .order('due_date', { ascending: true });
@@ -878,7 +867,7 @@
         }
 
         async function loadGoals() {
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('goals')
                 .select('*')
                 .order('created_at', { ascending: false });
@@ -893,7 +882,7 @@
         }
 
         async function loadCards() {
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('credit_cards')
                 .select('*')
                 .order('created_at', { ascending: false });
@@ -907,7 +896,6 @@
             updateCardsDisplay();
         }
 
-        // Transações
         async function addTransaction() {
             const description = document.getElementById('description').value.trim();
             const amount = parseFloat(document.getElementById('amount').value);
@@ -920,7 +908,7 @@
                 return;
             }
 
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('transactions')
                 .insert([{
                     description,
@@ -951,7 +939,7 @@
 
             const newStatus = transaction.status === 'paid' ? 'pending' : 'paid';
             
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('transactions')
                 .update({ status: newStatus })
                 .eq('id', id);
@@ -968,7 +956,7 @@
         async function deleteTransaction(id) {
             if (!confirm('Excluir esta transação?')) return;
 
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('transactions')
                 .delete()
                 .eq('id', id);
@@ -1012,7 +1000,7 @@
                 return;
             }
 
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('transactions')
                 .update({ description, amount, due_date: dueDate, type, category })
                 .eq('id', editingId);
@@ -1042,7 +1030,6 @@
             document.getElementById('dueDate').value = '';
         }
 
-        // Metas
         async function addGoal() {
             const name = document.getElementById('goalName').value.trim();
             const target = parseFloat(document.getElementById('goalTarget').value);
@@ -1053,7 +1040,7 @@
                 return;
             }
 
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('goals')
                 .insert([{ 
                     name, 
@@ -1083,7 +1070,7 @@
 
             const newAmount = parseFloat(goal.current_amount) + increment;
             
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('goals')
                 .update({ current_amount: newAmount })
                 .eq('id', id);
@@ -1100,7 +1087,7 @@
         async function deleteGoal(id) {
             if (!confirm('Excluir esta meta?')) return;
 
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('goals')
                 .delete()
                 .eq('id', id);
@@ -1114,7 +1101,6 @@
             updateGoalsDisplay();
         }
 
-        // Cartões
         async function addCard() {
             const name = document.getElementById('cardName').value.trim();
             const limit = parseFloat(document.getElementById('cardLimit').value);
@@ -1131,7 +1117,7 @@
                 return;
             }
 
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('credit_cards')
                 .insert([{ 
                     name, 
@@ -1160,7 +1146,7 @@
         async function deleteCard(id) {
             if (!confirm('Excluir este cartão?')) return;
 
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('credit_cards')
                 .delete()
                 .eq('id', id);
@@ -1174,7 +1160,6 @@
             updateCardsDisplay();
         }
 
-        // UI
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -1319,7 +1304,6 @@
         }
 
         function updateCharts() {
-            // Gráfico de categorias
             const categoryData = {};
             transactions.forEach(t => {
                 if (t.type === 'expense') {
@@ -1354,7 +1338,6 @@
                 }
             });
 
-            // Gráfico de fluxo de caixa
             const monthlyData = {};
             transactions.forEach(t => {
                 const month = t.due_date ? t.due_date.substring(0, 7) : 'N/A';
@@ -1415,7 +1398,6 @@
             return (value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
-        // Fechar modal
         window.onclick = function(event) {
             const modal = document.getElementById('editModal');
             if (event.target === modal) closeEditModal();
