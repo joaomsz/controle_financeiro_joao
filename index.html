@@ -278,6 +278,13 @@
             font-weight: 600;
         }
 
+        /* CORREÇÃO: Limitar altura do canvas */
+        .chart-card canvas {
+            max-height: 250px !important;
+            height: 250px !important;
+            width: 100% !important;
+        }
+
         .chart-toggle {
             display: flex;
             gap: 5px;
