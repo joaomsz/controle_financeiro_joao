@@ -30,7 +30,6 @@
             --text-muted: #94a3b8;
             --border: #e2e8f0;
             --sidebar-width: 250px;
-            --sidebar-collapsed: 70px;
         }
 
         * {
@@ -49,6 +48,7 @@
 
         /* ===== SIDEBAR ===== */
         .sidebar {
+            display: none;
             position: fixed;
             left: 0;
             top: 0;
@@ -56,7 +56,6 @@
             width: var(--sidebar-width);
             background: var(--card);
             border-right: 1px solid var(--border);
-            display: flex;
             flex-direction: column;
             z-index: 1000;
             transition: transform 0.3s;
@@ -168,8 +167,9 @@
             background: var(--danger-light);
         }
 
-        /* ===== MAIN AREA ===== */
+        /* ===== MAIN CONTENT ===== */
         .main-content {
+            display: none;
             flex: 1;
             margin-left: var(--sidebar-width);
             padding: 25px;
@@ -255,15 +255,6 @@
             margin-bottom: 5px;
         }
 
-        .summary-card .card-trend {
-            font-size: 0.78em;
-            font-weight: 500;
-        }
-
-        .summary-card .card-trend.positive { color: var(--success); }
-        .summary-card .card-trend.negative { color: var(--danger); }
-        .summary-card .card-trend.warning { color: var(--warning); }
-
         /* ===== CHARTS ROW ===== */
         .charts-row {
             display: grid;
@@ -340,6 +331,7 @@
             color: var(--primary);
             text-decoration: none;
             font-weight: 500;
+            cursor: pointer;
         }
 
         .transaction-item {
@@ -354,13 +346,6 @@
 
         .transaction-item:last-child {
             border-bottom: none;
-        }
-
-        .transaction-item:hover {
-            background: var(--bg);
-            border-radius: 8px;
-            margin: 0 -8px;
-            padding: 12px 8px;
         }
 
         .transaction-icon {
@@ -428,32 +413,33 @@
             font-size: 0.8em;
             color: var(--primary);
             text-decoration: none;
+            cursor: pointer;
         }
 
         .goal-item {
             margin-bottom: 15px;
         }
 
-        .goal-item .goal-header {
+        .goal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 6px;
         }
 
-        .goal-item .goal-name {
+        .goal-name {
             font-size: 0.85em;
             font-weight: 600;
             color: var(--text);
         }
 
-        .goal-item .goal-percentage {
+        .goal-percentage {
             font-size: 0.8em;
             font-weight: 700;
             color: var(--success);
         }
 
-        .goal-item .goal-amount {
+        .goal-amount {
             font-size: 0.75em;
             color: var(--text-muted);
             margin-bottom: 6px;
@@ -471,6 +457,120 @@
             border-radius: 8px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             transition: width 0.4s;
+        }
+
+        /* ===== LOGIN SCREEN ===== */
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            background: var(--bg);
+            padding: 20px;
+        }
+
+        .login-box {
+            background: var(--card);
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 380px;
+            border: 1px solid var(--border);
+        }
+
+        .login-box .logo {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+
+        .login-box h1 {
+            text-align: center;
+            font-size: 1.5em;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .login-box .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            margin-bottom: 25px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.9em;
+            background: var(--bg);
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+
+        .btn-login:hover {
+            background: var(--primary-dark);
+        }
+
+        .link-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.82em;
+            width: 100%;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .error-message {
+            background: var(--danger-light);
+            color: var(--danger);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.82em;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .success-message {
+            background: var(--success-light);
+            color: var(--success);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.82em;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        /* ===== PAGE SECTIONS ===== */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
         }
 
         /* ===== MODAL ===== */
@@ -578,120 +678,6 @@
             cursor: pointer;
         }
 
-        /* ===== LOGIN SCREEN ===== */
-        .login-screen {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            width: 100%;
-            background: var(--bg);
-            padding: 20px;
-        }
-
-        .login-box {
-            background: var(--card);
-            border-radius: 18px;
-            padding: 35px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            width: 100%;
-            max-width: 380px;
-            border: 1px solid var(--border);
-        }
-
-        .login-box .logo {
-            text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 5px;
-        }
-
-        .login-box h1 {
-            text-align: center;
-            font-size: 1.5em;
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-
-        .login-box .subtitle {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.85em;
-            margin-bottom: 25px;
-        }
-
-        .login-box input {
-            width: 100%;
-            padding: 12px 14px;
-            margin-bottom: 10px;
-            border: 1.5px solid var(--border);
-            border-radius: 10px;
-            font-size: 0.9em;
-            background: var(--bg);
-        }
-
-        .login-box input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: white;
-        }
-
-        .login-box .btn-login {
-            width: 100%;
-            padding: 12px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.9em;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 8px;
-        }
-
-        .login-box .btn-login:hover {
-            background: var(--primary-dark);
-        }
-
-        .login-box .link-btn {
-            background: none;
-            border: none;
-            color: var(--primary);
-            cursor: pointer;
-            font-size: 0.82em;
-            width: 100%;
-            padding: 6px;
-            text-align: center;
-        }
-
-        .error-message {
-            background: var(--danger-light);
-            color: var(--danger);
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 0.82em;
-            margin-bottom: 12px;
-            display: none;
-        }
-
-        .success-message {
-            background: var(--success-light);
-            color: var(--success);
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 0.82em;
-            margin-bottom: 12px;
-            display: none;
-        }
-
-        /* ===== PAGE SECTIONS ===== */
-        .page-section {
-            display: none;
-        }
-
-        .page-section.active {
-            display: block;
-        }
-
         /* ===== RESPONSIVIDADE ===== */
         @media (max-width: 1024px) {
             .charts-row, .bottom-row {
@@ -781,7 +767,7 @@
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-logo">💰 ControlMoney</div>
-        <nav class="sidebar-nav" id="sidebarNav">
+        <nav class="sidebar-nav">
             <button class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">
                 <span class="icon">📊</span> Dashboard
             </button>
@@ -862,11 +848,11 @@
 
             <div class="bottom-row">
                 <div class="transactions-list">
-                    <h3>Últimas Transações <a href="#" onclick="switchPage('transactions')">Ver todas</a></h3>
+                    <h3>Últimas Transações <a onclick="switchPage('transactions')">Ver todas</a></h3>
                     <div id="recentTransactions"></div>
                 </div>
                 <div class="goals-card">
-                    <h3>Minhas Metas <a href="#" onclick="switchPage('goals')">Ver todas</a></h3>
+                    <h3>Minhas Metas <a onclick="switchPage('goals')">Ver todas</a></h3>
                     <div id="recentGoals"></div>
                 </div>
             </div>
@@ -1294,7 +1280,6 @@
             container.innerHTML = transactions.map(t => {
                 const isIncome = t.type === 'income';
                 const icon = isIncome ? '💼' : getCategoryIcon(t.category);
-                const statusClass = t.status === 'paid' ? 'success' : (new Date(t.due_date) < new Date() ? 'danger' : 'warning');
                 return `
                     <div class="transaction-item" style="padding: 15px 20px; border-bottom: 1px solid var(--border); cursor: default;">
                         <div class="transaction-icon ${isIncome ? 'income' : 'expense'}">${icon}</div>
@@ -1353,7 +1338,7 @@
             }
 
             container.innerHTML = creditCards.map(c => `
-                <div class="summary-card" style="background: linear-gradient(135deg, ${c.color || 'var(--primary)'}, var(--secondary)); color: white; border: none;">
+                <div class="summary-card" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none;">
                     <div class="card-label" style="color: rgba(255,255,255,0.8);">💳 ${c.name}</div>
                     <div class="card-value" style="font-size: 1.3em; color: white;">${formatCurrency(c.credit_limit)}</div>
                     <div style="font-size: 0.8em; color: rgba(255,255,255,0.8); margin-top: 5px;">Fechamento: dia ${c.closing_day}</div>
@@ -1391,8 +1376,8 @@
                 data: {
                     labels,
                     datasets: [
-                        { label: 'Entradas', data: keys.map(k => monthlyData[k].income), backgroundColor: 'var(--success)', borderRadius: 4 },
-                        { label: 'Saídas', data: keys.map(k => monthlyData[k].expense), backgroundColor: 'var(--danger)', borderRadius: 4 }
+                        { label: 'Entradas', data: keys.map(k => monthlyData[k].income), backgroundColor: '#10b981', borderRadius: 4 },
+                        { label: 'Saídas', data: keys.map(k => monthlyData[k].expense), backgroundColor: '#ef4444', borderRadius: 4 }
                     ]
                 },
                 options: {
@@ -1434,7 +1419,6 @@
                 }
             });
 
-            // Legend
             const legendContainer = document.getElementById('categoryLegend');
             const total = values.reduce((a, b) => a + b, 0);
             legendContainer.innerHTML = labels.map((label, i) => `
@@ -1451,14 +1435,12 @@
         }
 
         function renderReports() {
-            // Similar to dashboard charts but for reports page
             const ctx1 = document.getElementById('reportsCashFlow').getContext('2d');
             const ctx2 = document.getElementById('reportsCategoryChart').getContext('2d');
             
             if (reportsCashFlowInstance) reportsCashFlowInstance.destroy();
             if (reportsCategoryInstance) reportsCategoryInstance.destroy();
 
-            // Cash flow
             const monthly = {};
             transactions.forEach(t => {
                 const m = t.due_date.substring(0, 7);
@@ -1473,14 +1455,13 @@
                 data: {
                     labels: months.map(formatMonthLabel),
                     datasets: [
-                        { label: 'Entradas', data: months.map(m => monthly[m].income), borderColor: 'var(--success)', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.4 },
-                        { label: 'Saídas', data: months.map(m => monthly[m].expense), borderColor: 'var(--danger)', backgroundColor: 'rgba(239,68,68,0.1)', fill: true, tension: 0.4 }
+                        { label: 'Entradas', data: months.map(m => monthly[m].income), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.4 },
+                        { label: 'Saídas', data: months.map(m => monthly[m].expense), borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', fill: true, tension: 0.4 }
                     ]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
             });
 
-            // Category bar
             const catData = {};
             transactions.filter(t => t.type === 'expense').forEach(t => {
                 if (!catData[t.category]) catData[t.category] = 0;
@@ -1491,7 +1472,7 @@
                 type: 'bar',
                 data: {
                     labels: Object.keys(catData).map(capitalize),
-                    datasets: [{ label: 'Gastos', data: Object.values(catData), backgroundColor: 'var(--primary)', borderRadius: 6 }]
+                    datasets: [{ label: 'Gastos', data: Object.values(catData), backgroundColor: '#2563eb', borderRadius: 6 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
@@ -1614,7 +1595,7 @@
             }
         }
 
-        // ===== GOALS ACTIONS =====
+        // ===== GOALS =====
         async function addMoneyToGoal(id) {
             const goal = goals.find(g => g.id === id);
             if (!goal) return;
@@ -1647,7 +1628,7 @@
             }
         }
 
-        // ===== CARDS ACTIONS =====
+        // ===== CARDS =====
         async function deleteCard(id) {
             if (!confirm('Excluir este cartão?')) return;
             const { error } = await supabaseClient
