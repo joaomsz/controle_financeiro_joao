@@ -278,7 +278,6 @@
             font-weight: 600;
         }
 
-        /* CORREÇÃO: Limitar altura do canvas */
         .chart-card canvas {
             max-height: 250px !important;
             height: 250px !important;
@@ -890,6 +889,9 @@
                     <h1>Metas Financeiras</h1>
                     <p class="subtitle">Acompanhe o progresso das suas metas.</p>
                 </div>
+                <div class="header-actions">
+                    <button class="btn-new-transaction" onclick="openNewGoalModal()">+ Nova Meta</button>
+                </div>
             </div>
             <div id="allGoalsContainer" class="summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));"></div>
         </div>
@@ -901,6 +903,9 @@
                     <button class="mobile-menu-btn" onclick="openSidebar()">☰</button>
                     <h1>Cartões</h1>
                     <p class="subtitle">Gerencie seus cartões de crédito.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-new-transaction" onclick="openNewCardModal()">+ Novo Cartão</button>
                 </div>
             </div>
             <div id="allCardsContainer" class="summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));"></div>
@@ -1016,6 +1021,56 @@
             <div class="modal-actions">
                 <button class="btn-secondary" onclick="closeEditTransactionModal()">Cancelar</button>
                 <button class="btn-primary" onclick="saveEditTransaction()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NOVA META -->
+    <div class="modal-overlay" id="newGoalModal">
+        <div class="modal-box">
+            <h3>🎯 Nova Meta</h3>
+            <div class="form-group">
+                <label>Nome da Meta</label>
+                <input type="text" id="goalNameInput" placeholder="Ex: Viagem para Europa">
+            </div>
+            <div class="form-group">
+                <label>Valor Objetivo (R$)</label>
+                <input type="number" id="goalTargetInput" placeholder="Ex: 15000">
+            </div>
+            <div class="form-group">
+                <label>Valor Atual (R$) - opcional</label>
+                <input type="number" id="goalCurrentInput" placeholder="Ex: 0">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeNewGoalModal()">Cancelar</button>
+                <button class="btn-primary" onclick="saveNewGoal()">Criar Meta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NOVO CARTÃO -->
+    <div class="modal-overlay" id="newCardModal">
+        <div class="modal-box">
+            <h3>💳 Novo Cartão</h3>
+            <div class="form-group">
+                <label>Nome do Cartão</label>
+                <input type="text" id="cardNameInput" placeholder="Ex: Nubank">
+            </div>
+            <div class="form-group">
+                <label>Limite (R$)</label>
+                <input type="number" id="cardLimitInput" placeholder="Ex: 5000">
+            </div>
+            <div class="form-group">
+                <label>Dia do Fechamento (1-31)</label>
+                <input type="number" id="cardClosingInput" placeholder="Ex: 5" min="1" max="31">
+            </div>
+            <div class="form-group">
+                <label>Dia do Vencimento (1-31)</label>
+                <input type="number" id="cardDueInput" placeholder="Ex: 10" min="1" max="31">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeNewCardModal()">Cancelar</button>
+                <button class="btn-primary" onclick="saveNewCard()">Adicionar Cartão</button>
             </div>
         </div>
     </div>
@@ -1310,7 +1365,7 @@
             const container = document.getElementById('allGoalsContainer');
             
             if (goals.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted);">Nenhuma meta criada.</p>';
+                container.innerHTML = '<p style="color: var(--text-muted);">Nenhuma meta criada. Clique em "+ Nova Meta" para começar.</p>';
                 return;
             }
 
@@ -1340,7 +1395,7 @@
             const container = document.getElementById('allCardsContainer');
             
             if (creditCards.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted);">Nenhum cartão cadastrado.</p>';
+                container.innerHTML = '<p style="color: var(--text-muted);">Nenhum cartão cadastrado. Clique em "+ Novo Cartão" para começar.</p>';
                 return;
             }
 
@@ -1602,7 +1657,47 @@
             }
         }
 
-        // ===== GOALS =====
+        // ===== NOVA META =====
+        function openNewGoalModal() {
+            document.getElementById('newGoalModal').classList.add('show');
+        }
+
+        function closeNewGoalModal() {
+            document.getElementById('newGoalModal').classList.remove('show');
+        }
+
+        async function saveNewGoal() {
+            const name = document.getElementById('goalNameInput').value.trim();
+            const target = parseFloat(document.getElementById('goalTargetInput').value);
+            const current = parseFloat(document.getElementById('goalCurrentInput').value) || 0;
+
+            if (!name || !target) {
+                alert('Preencha o nome e o valor objetivo!');
+                return;
+            }
+
+            const { data, error } = await supabaseClient
+                .from('goals')
+                .insert([{ user_id: currentUser.id, name, target_amount: target, current_amount: current }])
+                .select();
+
+            if (error) {
+                alert('Erro: ' + error.message);
+                return;
+            }
+
+            if (data && data[0]) {
+                goals.push(data[0]);
+                renderRecentGoals();
+                renderAllGoals();
+                closeNewGoalModal();
+                document.getElementById('goalNameInput').value = '';
+                document.getElementById('goalTargetInput').value = '';
+                document.getElementById('goalCurrentInput').value = '';
+                alert('✅ Meta criada!');
+            }
+        }
+
         async function addMoneyToGoal(id) {
             const goal = goals.find(g => g.id === id);
             if (!goal) return;
@@ -1635,7 +1730,53 @@
             }
         }
 
-        // ===== CARDS =====
+        // ===== NOVO CARTÃO =====
+        function openNewCardModal() {
+            document.getElementById('newCardModal').classList.add('show');
+        }
+
+        function closeNewCardModal() {
+            document.getElementById('newCardModal').classList.remove('show');
+        }
+
+        async function saveNewCard() {
+            const name = document.getElementById('cardNameInput').value.trim();
+            const limit = parseFloat(document.getElementById('cardLimitInput').value);
+            const closing = parseInt(document.getElementById('cardClosingInput').value);
+            const due = parseInt(document.getElementById('cardDueInput').value);
+
+            if (!name || !limit || !closing || !due) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+
+            if (closing < 1 || closing > 31 || due < 1 || due > 31) {
+                alert('Os dias devem estar entre 1 e 31!');
+                return;
+            }
+
+            const { data, error } = await supabaseClient
+                .from('credit_cards')
+                .insert([{ user_id: currentUser.id, name, credit_limit: limit, closing_day: closing, due_day: due }])
+                .select();
+
+            if (error) {
+                alert('Erro: ' + error.message);
+                return;
+            }
+
+            if (data && data[0]) {
+                creditCards.push(data[0]);
+                renderAllCards();
+                closeNewCardModal();
+                document.getElementById('cardNameInput').value = '';
+                document.getElementById('cardLimitInput').value = '';
+                document.getElementById('cardClosingInput').value = '';
+                document.getElementById('cardDueInput').value = '';
+                alert('✅ Cartão adicionado!');
+            }
+        }
+
         async function deleteCard(id) {
             if (!confirm('Excluir este cartão?')) return;
             const { error } = await supabaseClient
